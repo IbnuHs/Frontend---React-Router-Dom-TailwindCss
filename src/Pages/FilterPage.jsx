@@ -1,4 +1,3 @@
-import React, { use, useState } from "react";
 import { CiMap } from "react-icons/ci";
 import { FaGlobeAsia } from "react-icons/fa";
 import { FaArrowDownLong } from "react-icons/fa6";
@@ -47,16 +46,18 @@ export const FilterPage = () => {
     {
       title: "KOTA/KABUPATEN",
       icon: <MdLocationCity className="text-gray-400" size={20} />,
-      option: data.regencies.filter(
-        item => item.province_id === Number(province),
-      ),
+      option: province
+        ? data.regencies.filter(item => item.province_id === Number(province))
+        : [],
       value: regency,
       eventKey: "regency",
     },
     {
       title: "KECAMATAN",
       icon: <IoLocationOutline className="text-gray-400" size={20} />,
-      option: data.district.filter(item => item.regency_id === Number(regency)),
+      option: regency
+        ? data.district.filter(item => item.regency_id === Number(regency))
+        : [],
       value: district,
       eventKey: "district",
     },
@@ -75,7 +76,7 @@ export const FilterPage = () => {
       style: "text-5xl",
     },
     {
-      title: "KOTA/KABUPTATEN",
+      title: "KOTA/KABUPATEN",
       value: selected_regency,
       style: "text-5xl",
     },
@@ -85,12 +86,7 @@ export const FilterPage = () => {
       style: "text-4xl",
     },
   ];
-
-  console.log(searchParams);
-
   let filterActive = province || regency || district;
-
-  console.log(filterActive);
   return (
     <div className="flex min-h-screen font-roboto">
       {/* Sidebar */}
@@ -110,19 +106,26 @@ export const FilterPage = () => {
             {selectCollection.map((item, index) => (
               <div key={index} className="flex flex-col gap-3">
                 <label
-                  htmlFor=""
+                  htmlFor={item.eventKey}
                   className="uppercase text-xs font-bold text-gray-500">
                   {item.title}
                 </label>
                 <div className="flex border-2 border-gray-400 justify-between p-3 gap-2 rounded-2xl items-center text-gray-500">
                   {item.icon}
                   <select
+                    name={item.eventKey}
                     onChange={e => {
                       handleChange(item.eventKey, e.target.value);
                     }}
+                    disabled={
+                      (item.eventKey === "regency" && !province) ||
+                      (item.eventKey === "district" && !regency)
+                    }
                     value={item.value}
-                    className="bg-white flex-1 text-sm text-gray-700 font-semibold">
-                    <option value="">Pilih {item.title}</option>
+                    className="bg-white flex-1 text-sm text-gray-700 font-semibold uppercase">
+                    <option value="" disabled>
+                      Pilih {item.title}
+                    </option>
                     {item.option.map((item, index) => (
                       <option
                         key={index}
@@ -148,7 +151,8 @@ export const FilterPage = () => {
       </div>
       <div className="flex flex-col flex-1">
         <nav className="border-b py-7 w-full px-6">
-          <div className="flex gap-3 items-center">
+          {/* Breadcrumb */}
+          <div className="breadcrumb flex gap-3 items-center">
             <p className="text-xs text-gray-400 font-bold">Indonesia</p>
             {breadctumbsItem.map((item, index) => {
               let isLast = breadctumbsItem.length - 1 === index;
