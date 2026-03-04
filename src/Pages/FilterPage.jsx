@@ -175,7 +175,7 @@ export const FilterPage = () => {
                   <p className="text-blue-300 uppercase font-semibold text-xs tracking-[0.3em]">
                     {item.title}
                   </p>
-                  <h2 className={`${item.style} font-bold text-sm`}>
+                  <h2 className={`${item.style} font-bold`}>
                     {item.value ? item.value.name : ""}
                   </h2>
                 </div>
